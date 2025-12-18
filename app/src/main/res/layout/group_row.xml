@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/height"
+    android:layout_width="match_parent"
+    android:layout_height="128dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/groupNameTextView_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom|center"
+        android:text="Title Example"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="1dp"
+        android:background="#000000" />
+
+    <TextView
+        android:id="@+id/groupCountTextView_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:gravity="center_horizontal"
+        android:text="XXX Active Items"
+        android:textColor="#B4B4B4" />
+
+    <View
+        android:id="@+id/dividerView_id"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="0dp"
+        android:background="#050505" />
+
+</LinearLayout>
