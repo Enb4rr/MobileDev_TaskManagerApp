@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -68,13 +69,34 @@ class GroupsActivity : AppCompatActivity(), GroupListener
         builder.setView(nameEditText)
 
         builder.setPositiveButton("Create") { _, _ ->
-            val newGroup = Group(nameEditText.text.toString(), mutableListOf())
-            AppData.groups.add(newGroup)
+
+            val groupName = nameEditText.text.toString().normalized()
+
+            // Empty check
+            if (groupName.isEmpty()) {
+                Toast.makeText(this, "Group name cannot be empty", Toast.LENGTH_SHORT).show()
+                return@setPositiveButton
+            }
+
+            // Duplicate check
+            val exists = AppData.groups.any {
+                it.name.equals(groupName, ignoreCase = true)
+            }
+
+            if (exists) {
+                Toast.makeText(this, "Group already exists", Toast.LENGTH_SHORT).show()
+                return@setPositiveButton
+            }
+
+            AppData.groups.add(Group(groupName, mutableListOf()))
             groupsAdapter.notifyDataSetChanged()
         }
+
         builder.setNegativeButton("Cancel") { _, _ -> }
 
         val dialog = builder.create()
         dialog.show()
     }
+
+    fun String.normalized(): String = this.trim()
 }

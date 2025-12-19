@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -85,8 +86,26 @@ class TasksActivity : AppCompatActivity(), TaskListener
         builder.setView(nameEditText)
 
         builder.setPositiveButton("Create") { _, _ ->
-            val newTask = Task(nameEditText.text.toString(), false)
-            thisGroup.tasks.add(newTask)
+
+            val taskName = nameEditText.text.toString().normalized()
+
+            // Empty check
+            if (taskName.isEmpty()) {
+                Toast.makeText(this, "Task name cannot be empty", Toast.LENGTH_SHORT).show()
+                return@setPositiveButton
+            }
+
+            // Duplicate check inside the same group
+            val exists = thisGroup.tasks.any {
+                it.name.equals(taskName, ignoreCase = true)
+            }
+
+            if (exists) {
+                Toast.makeText(this, "Task already exists in this group", Toast.LENGTH_SHORT).show()
+                return@setPositiveButton
+            }
+
+            thisGroup.tasks.add(Task(taskName, false))
             taskAdapter.notifyDataSetChanged()
         }
 
@@ -116,7 +135,26 @@ class TasksActivity : AppCompatActivity(), TaskListener
         builder.setView(editText)
 
         builder.setPositiveButton("Save") { _, _ ->
-            task.name = editText.text.toString()
+
+            val newName = editText.text.toString().normalized()
+
+            // Empty check
+            if (newName.isEmpty()) {
+                Toast.makeText(this, "Task name cannot be empty", Toast.LENGTH_SHORT).show()
+                return@setPositiveButton
+            }
+
+            // Duplicate check (exclude current task)
+            val exists = thisGroup.tasks.any {
+                it !== task && it.name.equals(newName, ignoreCase = true)
+            }
+
+            if (exists) {
+                Toast.makeText(this, "Task already exists", Toast.LENGTH_SHORT).show()
+                return@setPositiveButton
+            }
+
+            task.name = newName
             taskAdapter.notifyItemChanged(index)
         }
 
@@ -124,4 +162,6 @@ class TasksActivity : AppCompatActivity(), TaskListener
 
         builder.create().show()
     }
+
+    fun String.normalized(): String = this.trim()
 }
