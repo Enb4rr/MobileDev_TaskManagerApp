@@ -1,8 +1,8 @@
 package com.vfs.class07
 
-data class Task (val name: String, var completed: Boolean)
+data class Task (var name: String, var completed: Boolean)
 
-data class Group (val name: String, var tasks: MutableList<Task>)
+data class Group (var name: String, var tasks: MutableList<Task>)
 
 class AppData
 {

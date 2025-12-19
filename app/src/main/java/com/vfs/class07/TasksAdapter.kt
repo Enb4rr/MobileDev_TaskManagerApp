@@ -9,6 +9,7 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.core.graphics.toColorInt
 
 interface TaskListener
 {
@@ -34,18 +35,16 @@ class TaskViewHolder (rootView : LinearLayout) : RecyclerView.ViewHolder(rootVie
         taskNameTextView.text = task.name
         taskCompletedCheckBox.isChecked = task.completed
 
-        //if (task.completed)
-        //{
-        //taskNameTextView.paintFlags = taskNameTextView.paintFlags or
-        //            Paint.STRIKE_THRU_TEXT_FLAG
-        //    itemView.setBackgroundColor(Color.GRAY)
-        //}
-        //else
-        //{
-        //    taskNameTextView.paintFlags = taskNameTextView.paintFlags or
-        //            Paint.STRIKE_THRU_TEXT_FLAG.inv()
-        //    itemView.setBackgroundColor(Color.TRANSPARENT)
-        //}
+        if (task.completed)
+        {
+        taskNameTextView.paintFlags = taskNameTextView.paintFlags or
+                    Paint.STRIKE_THRU_TEXT_FLAG
+        }
+        else
+        {
+            taskNameTextView.paintFlags = taskNameTextView.paintFlags and
+                    Paint.STRIKE_THRU_TEXT_FLAG.inv()
+        }
 
         taskDividerViewHolder.visibility = View.VISIBLE
         if (hideDivider) taskDividerViewHolder.visibility = View.GONE

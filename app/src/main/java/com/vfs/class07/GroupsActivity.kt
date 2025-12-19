@@ -11,24 +11,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
-// Home page ~ Launcher
-
-    // This should be called something like GroupsActivity
-    // List of groups
-    // Add groups
-    // Delete groups
-    // Click on a group
-
-// Group page
-
-    // This should be called something like ItemsActivity
-    // List items in the group
-    // Delete items
-    // Set an item as done
-    // Go back to home page
 
 class GroupsActivity : AppCompatActivity(), GroupListener
 {
@@ -39,6 +25,17 @@ class GroupsActivity : AppCompatActivity(), GroupListener
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.groups_layout)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rootLayout)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+            insets
+        }
 
         AppData.initialize()
 
@@ -58,7 +55,7 @@ class GroupsActivity : AppCompatActivity(), GroupListener
     override fun groupLongClicked(index: Int)
     {
         AppData.groups.removeAt(index)
-        groupsAdapter.notifyItemRemoved(index)
+        groupsAdapter.notifyDataSetChanged()
     }
 
     fun addNewGroup(v : View)
@@ -73,7 +70,7 @@ class GroupsActivity : AppCompatActivity(), GroupListener
         builder.setPositiveButton("Create") { _, _ ->
             val newGroup = Group(nameEditText.text.toString(), mutableListOf())
             AppData.groups.add(newGroup)
-            groupsAdapter.notifyItemInserted(AppData.groups.count() - 1)
+            groupsAdapter.notifyDataSetChanged()
         }
         builder.setNegativeButton("Cancel") { _, _ -> }
 
