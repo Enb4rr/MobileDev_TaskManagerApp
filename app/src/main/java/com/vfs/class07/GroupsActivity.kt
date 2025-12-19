@@ -73,6 +73,7 @@ class GroupsActivity : AppCompatActivity(), GroupListener
         builder.setPositiveButton("Create") { _, _ ->
             val newGroup = Group(nameEditText.text.toString(), mutableListOf())
             AppData.groups.add(newGroup)
+            groupsAdapter.notifyItemInserted(AppData.groups.count() - 1)
         }
         builder.setNegativeButton("Cancel") { _, _ -> }
 

@@ -37,7 +37,7 @@ class TasksActivity : AppCompatActivity(), TaskListener
     override fun taskClicked(index: Int)
     {
         thisGroup.tasks[index].completed = !thisGroup.tasks[index].completed
-        taskAdapter.notifyDataSetChanged()
+        taskAdapter.notifyItemChanged(index)
     }
 
     override fun taskLongClicked(index: Int)

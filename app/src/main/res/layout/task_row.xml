@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="#FFFFFF"
+    android:background="#1A1A1A"
     android:orientation="vertical">
 
     <LinearLayout
@@ -16,13 +16,13 @@
         <TextView
             android:id="@+id/taskTextView_id"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:fontFamily="sans-serif-medium"
             android:gravity="center_vertical"
             android:paddingStart="20dp"
             android:text="Task Title Example"
-            android:textColor="#000000"
+            android:textColor="#C9E9DA9B"
             android:textSize="18sp" />
 
         <CheckBox
@@ -30,7 +30,7 @@
             android:layout_width="62dp"
             android:layout_height="match_parent"
             android:layout_weight="0"
-            android:buttonTint="#000000" />
+            android:buttonTint="#C9E25F1F" />
     </LinearLayout>
 
     <View
@@ -39,6 +39,6 @@
         android:layout_height="2dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        android:background="#000000" />
+        android:background="#203361" />
 
 </LinearLayout>

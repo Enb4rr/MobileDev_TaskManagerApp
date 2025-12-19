@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#1A1A1A"
     tools:context=".TasksActivity">
 
     <TextView
@@ -13,16 +13,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:text="Group Title"
-        android:textColor="#FFFFFF"
-        android:textSize="30dp"
+        android:textColor="#C9E9DA9B"
+        android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tasksRv_id"
@@ -36,4 +36,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/grpNameTextView_id" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#203361"
+        android:fontFamily="sans-serif-black"
+        android:text="Back"
+        android:textColor="#C9E9DA9B"
+        android:textSize="16sp"
+        app:cornerRadius="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
