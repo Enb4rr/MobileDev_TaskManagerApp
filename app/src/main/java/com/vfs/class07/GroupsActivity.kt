@@ -23,10 +23,12 @@ class GroupsActivity : AppCompatActivity(), GroupListener
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        // Initialize Activity
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.groups_layout)
 
+        // Keep Activity in bounds
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rootLayout)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(
@@ -38,8 +40,10 @@ class GroupsActivity : AppCompatActivity(), GroupListener
             insets
         }
 
+        // Initialize Data
         AppData.initialize()
 
+        // Initialize UI
         val groupsRv = findViewById<RecyclerView>(R.id.groupsRv_id)
         groupsRv.layoutManager = LinearLayoutManager(this)
 
@@ -47,20 +51,24 @@ class GroupsActivity : AppCompatActivity(), GroupListener
         groupsRv.adapter = groupsAdapter
     }
 
+    // Load TaskActivity with the clicked Group Data
     override fun groupClicked(index: Int) {
         val intent = Intent(this, TasksActivity::class.java)
         intent.putExtra("index", index)
         startActivity(intent)
     }
 
+    // Remove Group from Data and UI
     override fun groupLongClicked(index: Int)
     {
         AppData.groups.removeAt(index)
         groupsAdapter.notifyDataSetChanged()
     }
 
+    // Add new group to Data and UI
     fun addNewGroup(v : View)
     {
+        // Create Dialog
         val builder = AlertDialog.Builder(this)
         builder.setTitle("New Group")
         builder.setMessage("Enter the name of the new group")
@@ -70,6 +78,7 @@ class GroupsActivity : AppCompatActivity(), GroupListener
 
         builder.setPositiveButton("Create") { _, _ ->
 
+            // Get group name
             val groupName = nameEditText.text.toString().normalized()
 
             // Empty check
@@ -88,15 +97,19 @@ class GroupsActivity : AppCompatActivity(), GroupListener
                 return@setPositiveButton
             }
 
+            // Add group to Data and UI
             AppData.groups.add(Group(groupName, mutableListOf()))
             groupsAdapter.notifyDataSetChanged()
         }
 
-        builder.setNegativeButton("Cancel") { _, _ -> }
+        // Cancel
+        builder.setNegativeButton("Cancel", null)
 
+        // Show Dialog
         val dialog = builder.create()
         dialog.show()
     }
 
+    // Extension function to remove leading/trailing spaces
     fun String.normalized(): String = this.trim()
 }

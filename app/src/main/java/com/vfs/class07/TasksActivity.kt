@@ -21,10 +21,12 @@ class TasksActivity : AppCompatActivity(), TaskListener
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        // Initialize Activity
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.tasks_layout)
 
+        // Keep Activity in bounds
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rootLayout)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(
@@ -36,9 +38,11 @@ class TasksActivity : AppCompatActivity(), TaskListener
             insets
         }
 
+        // Initialize Data
         val index = intent.getIntExtra("index", 0)
         thisGroup = AppData.groups[index]
 
+        // Initialize UI
         val grpTextView = findViewById<TextView>(R.id.grpNameTextView_id)
         grpTextView.text = thisGroup.name
 
@@ -49,18 +53,20 @@ class TasksActivity : AppCompatActivity(), TaskListener
         tasksRv.adapter = taskAdapter
     }
 
+    // Return to GroupsActivity
     fun goBackToGroups(v: View)
     {
-
         finish()
     }
 
+    // Toggle task completion
     override fun taskClicked(index: Int)
     {
         thisGroup.tasks[index].completed = !thisGroup.tasks[index].completed
         taskAdapter.notifyItemChanged(index)
     }
 
+    // Show edit/delete dialog
     override fun taskLongClicked(index: Int)
     {
         val options = arrayOf("Edit", "Delete")
@@ -76,8 +82,10 @@ class TasksActivity : AppCompatActivity(), TaskListener
             .show()
     }
 
+    // Add new task to Data and UI
     fun addNewTask(v : View)
     {
+        // Create Dialog
         val builder = AlertDialog.Builder(this)
         builder.setTitle("New Task")
         builder.setMessage("Enter the name of the new task")
@@ -87,6 +95,7 @@ class TasksActivity : AppCompatActivity(), TaskListener
 
         builder.setPositiveButton("Create") { _, _ ->
 
+            // Get task name
             val taskName = nameEditText.text.toString().normalized()
 
             // Empty check
@@ -105,26 +114,33 @@ class TasksActivity : AppCompatActivity(), TaskListener
                 return@setPositiveButton
             }
 
+            // Add task to Data and UI
             thisGroup.tasks.add(Task(taskName, false))
             taskAdapter.notifyDataSetChanged()
         }
 
+        // Cancel
         builder.setNegativeButton("Cancel") { _, _ -> }
 
+        // Show Dialog
         val dialog = builder.create()
         dialog.show()
     }
 
+    // Remove task from Data and UI
     fun deleteTask(index: Int)
     {
         thisGroup.tasks.removeAt(index)
         taskAdapter.notifyDataSetChanged()
     }
 
+    // Edit task name
     fun showEditTaskDialog(index: Int)
     {
+        // Get task
         val task = thisGroup.tasks[index]
 
+        // Create Dialog
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Edit Task")
         builder.setMessage("Update task name")
@@ -136,6 +152,7 @@ class TasksActivity : AppCompatActivity(), TaskListener
 
         builder.setPositiveButton("Save") { _, _ ->
 
+            // Get new task name
             val newName = editText.text.toString().normalized()
 
             // Empty check
@@ -154,14 +171,18 @@ class TasksActivity : AppCompatActivity(), TaskListener
                 return@setPositiveButton
             }
 
+            // Update task name in Data and UI
             task.name = newName
             taskAdapter.notifyItemChanged(index)
         }
 
+        // Cancel
         builder.setNegativeButton("Cancel", null)
 
+        // Show Dialog
         builder.create().show()
     }
 
+    // Extension function to remove leading/trailing spaces
     fun String.normalized(): String = this.trim()
 }
