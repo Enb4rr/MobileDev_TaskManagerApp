@@ -9,7 +9,7 @@
     tools:context=".GroupsActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/mainTitleTextView_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -25,22 +25,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/newGroupButton_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:backgroundTint="#203361"
         android:fontFamily="sans-serif-black"
+        android:onClick="addNewGroup"
         android:text="+ New Group"
         android:textColor="#C9E9DA9B"
         android:textSize="16sp"
         app:cornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/mainTitleTextView_id" />
 
     <View
-        android:id="@+id/view2"
+        android:id="@+id/mainSeparator_id"
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginStart="45dp"
@@ -49,7 +50,7 @@
         android:background="#203361"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/newGroupButton_id" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/groupsRv_id"
@@ -62,6 +63,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
+        app:layout_constraintTop_toBottomOf="@+id/mainSeparator_id" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
