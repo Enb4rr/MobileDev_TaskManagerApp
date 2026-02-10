@@ -1,5 +1,7 @@
 package com.vfs.class07
 
+data class User(val uid: String, val username: String, val email: String)
+
 data class Task (var name: String, var completed: Boolean)
 
 data class Group (var name: String, var tasks: MutableList<Task>)
@@ -12,6 +14,8 @@ class AppData
 
         fun initialize ()
         {
+            if (groups.isNotEmpty()) return
+
             val task_1 = Task("Task 1", false)
             val task_2 = Task("Task 2", false)
             val task_3 = Task("Task 3", false)

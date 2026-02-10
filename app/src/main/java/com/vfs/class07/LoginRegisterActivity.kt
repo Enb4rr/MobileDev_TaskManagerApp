@@ -103,16 +103,30 @@ class LoginRegisterActivity : AppCompatActivity()
         Cloud.auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    val user = Cloud.auth.currentUser
-                    val profileUpdates = userProfileChangeRequest {
-                        displayName = username
-                    }
-
-                    user?.updateProfile(profileUpdates)
-                        ?.addOnCompleteListener { profileTask ->
-                            if (profileTask.isSuccessful) {
-                                Toast.makeText(this, "Registration Successful!", Toast.LENGTH_SHORT).show()
-                                navigateToMain()
+                    val firebaseUser = Cloud.auth.currentUser
+                    val uid = firebaseUser?.uid ?: ""
+                    
+                    // Create User object
+                    val newUser = User(uid, username, email)
+                    
+                    // Save to Realtime Database
+                    Cloud.db.reference.child("users").child(uid).setValue(newUser)
+                        .addOnCompleteListener { dbTask ->
+                            if (dbTask.isSuccessful) {
+                                // Also update Firebase Auth Profile (for displayName)
+                                val profileUpdates = userProfileChangeRequest {
+                                    displayName = username
+                                }
+                                
+                                firebaseUser?.updateProfile(profileUpdates)
+                                    ?.addOnCompleteListener { profileTask ->
+                                        if (profileTask.isSuccessful) {
+                                            Toast.makeText(this, "Registration Successful!", Toast.LENGTH_SHORT).show()
+                                            navigateToMain()
+                                        }
+                                    }
+                            } else {
+                                Toast.makeText(this, "Database Error: ${dbTask.exception?.message}", Toast.LENGTH_SHORT).show()
                             }
                         }
                 } else {
