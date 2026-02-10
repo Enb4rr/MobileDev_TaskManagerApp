@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1A1A1A"
     android:padding="24dp"
     tools:context=".LoginRegisterActivity">
 
@@ -12,13 +13,11 @@
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="64dp"
-        android:layout_marginEnd="20dp"
         android:fontFamily="sans-serif-black"
         android:text="TASK MANAGER"
         android:textColor="#C9E25F1F"
-        android:textSize="32sp"
+        android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,9 +27,7 @@
         android:id="@+id/toggleGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginTop="48dp"
         app:checkedButton="@id/loginTab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,20 +37,27 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/loginTab"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login" />
+            android:minWidth="120dp"
+            android:text="Login"
+            android:textColor="#C9E9DA9B"
+            app:strokeColor="#203361" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/registerTab"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Register" />
+            android:minWidth="120dp"
+            android:text="Register"
+            android:textColor="#C9E9DA9B"
+            app:strokeColor="#203361" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
+    <!-- Username Section (Visible during Registration) -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/usernameInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -63,7 +67,10 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="20dp"
         android:hint="Username"
+        android:textColorHint="#888888"
         android:visibility="gone"
+        app:boxStrokeColor="#203361"
+        app:hintTextColor="#C9E9DA9B"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toggleGroup">
@@ -72,7 +79,8 @@
             android:id="@+id/usernameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="@android:color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -84,6 +92,9 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="20dp"
         android:hint="Email"
+        android:textColorHint="#888888"
+        app:boxStrokeColor="#203361"
+        app:hintTextColor="#C9E9DA9B"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/usernameInputLayout">
@@ -92,7 +103,8 @@
             android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:textColor="@android:color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -104,7 +116,11 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="20dp"
         android:hint="Password"
+        android:textColorHint="#888888"
+        app:boxStrokeColor="#203361"
         app:endIconMode="password_toggle"
+        app:endIconTint="#888888"
+        app:hintTextColor="#C9E9DA9B"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/emailInputLayout">
@@ -113,7 +129,8 @@
             android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@android:color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -121,15 +138,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="48dp"
         android:layout_marginEnd="20dp"
         android:backgroundTint="#203361"
         android:fontFamily="sans-serif-black"
-        android:padding="12dp"
+        android:padding="16dp"
         android:text="Login"
         android:textColor="#C9E9DA9B"
-        android:textSize="16sp"
-        app:cornerRadius="8dp"
+        android:textSize="18sp"
+        app:cornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/passwordInputLayout" />
