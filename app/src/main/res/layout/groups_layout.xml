@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLayout"
@@ -13,71 +12,59 @@
         android:id="@+id/mainTitleTextView_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
         android:fontFamily="sans-serif-black"
-        android:gravity="center"
-        android:text="TASK MANAGER"
+        android:text="TASK\nMANAGER"
         android:textColor="#C9E25F1F"
-        android:textSize="48sp"
+        android:textSize="44sp"
+        android:lineSpacingExtra="-8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/newGroupButton_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="24dp"
         android:backgroundTint="#203361"
         android:fontFamily="sans-serif-black"
         android:onClick="addNewGroup"
-        android:text="+ New Group"
+        android:text="New Group"
         android:textColor="#C9E9DA9B"
-        android:textSize="16sp"
-        app:cornerRadius="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainTitleTextView_id" />
-
-    <View
-        android:id="@+id/mainSeparator_id"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="45dp"
-        android:background="#203361"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newGroupButton_id" />
+        app:icon="@android:drawable/ic_input_add"
+        app:iconTint="#C9E9DA9B"
+        app:layout_constraintBottom_toTopOf="@+id/statusButton_id"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/groupsRv_id"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/statusButton_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainSeparator_id" />
+        app:layout_constraintTop_toBottomOf="@+id/mainTitleTextView_id" />
 
     <Button
         android:id="@+id/statusButton_id"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="20dp"
+        android:layout_height="60dp"
         android:backgroundTint="#203361"
-        android:gravity="center"
+        android:fontFamily="sans-serif-medium"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
         android:text="Offline"
         android:textColor="#C9E9DA9B"
-        app:cornerRadius="8dp"
+        app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
