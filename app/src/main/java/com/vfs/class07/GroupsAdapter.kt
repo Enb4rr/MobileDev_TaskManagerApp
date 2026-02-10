@@ -3,9 +3,9 @@ package com.vfs.class07
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 
 interface GroupListener
 {
@@ -13,7 +13,7 @@ interface GroupListener
     fun groupLongClicked (index : Int)
 }
 
-class GroupsViewHolder (rootView : LinearLayout) : RecyclerView.ViewHolder(rootView)
+class GroupsViewHolder (itemView : View) : RecyclerView.ViewHolder(itemView)
 {
     lateinit var groupNameTextView: TextView
     lateinit var groupCountTextView: TextView
@@ -28,9 +28,6 @@ class GroupsViewHolder (rootView : LinearLayout) : RecyclerView.ViewHolder(rootV
 
     fun bind (group : Group, hideDivider : Boolean)
     {
-        val groupName: String = group.name
-        val groupTasksCount: Int = group.tasks.count()
-
         groupNameTextView.text = group.name
         groupCountTextView.text = "${group.tasks.count()} Active Items"
 
@@ -43,10 +40,10 @@ class GroupsAdapter (var listener : GroupListener) : RecyclerView.Adapter<Groups
 {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupsViewHolder
     {
-        val rootLinearLayout = LayoutInflater.from(parent.context)
-            .inflate(R.layout.group_row, parent, false) as LinearLayout
+        val rootView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.group_row, parent, false)
 
-        return GroupsViewHolder(rootLinearLayout)
+        return GroupsViewHolder(rootView)
     }
 
     override fun onBindViewHolder(holder: GroupsViewHolder, position: Int)

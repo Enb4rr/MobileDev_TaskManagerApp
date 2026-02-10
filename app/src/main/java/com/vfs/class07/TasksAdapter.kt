@@ -1,15 +1,12 @@
 package com.vfs.class07
 
-import android.graphics.Color
 import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.graphics.toColorInt
 
 interface TaskListener
 {
@@ -17,7 +14,7 @@ interface TaskListener
     fun taskLongClicked (index : Int)
 }
 
-class TaskViewHolder (rootView : LinearLayout) : RecyclerView.ViewHolder(rootView)
+class TaskViewHolder (itemView : View) : RecyclerView.ViewHolder(itemView)
 {
     lateinit var taskNameTextView: TextView
     lateinit var taskCompletedCheckBox: CheckBox
@@ -37,13 +34,15 @@ class TaskViewHolder (rootView : LinearLayout) : RecyclerView.ViewHolder(rootVie
 
         if (task.completed)
         {
-        taskNameTextView.paintFlags = taskNameTextView.paintFlags or
+            taskNameTextView.paintFlags = taskNameTextView.paintFlags or
                     Paint.STRIKE_THRU_TEXT_FLAG
+            taskNameTextView.alpha = 0.5f
         }
         else
         {
             taskNameTextView.paintFlags = taskNameTextView.paintFlags and
                     Paint.STRIKE_THRU_TEXT_FLAG.inv()
+            taskNameTextView.alpha = 1.0f
         }
 
         taskDividerViewHolder.visibility = View.VISIBLE
@@ -55,10 +54,10 @@ class TasksAdapter (var listener : TaskListener, val group : Group) : RecyclerVi
 {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder
     {
-        val rootLinearLayout = LayoutInflater.from(parent.context)
-            .inflate(R.layout.task_row, parent, false) as LinearLayout
+        val rootView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.task_row, parent, false)
 
-        return TaskViewHolder(rootLinearLayout)
+        return TaskViewHolder(rootView)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int)
