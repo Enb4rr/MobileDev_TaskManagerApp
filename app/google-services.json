@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "61532070521",
+    "firebase_url": "https://pg29julianr-firebase-app-default-rtdb.firebaseio.com",
+    "project_id": "pg29julianr-firebase-app",
+    "storage_bucket": "pg29julianr-firebase-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61532070521:android:bfe22c78472b3b9c7c2aa8",
+        "android_client_info": {
+          "package_name": "com.example.myfirebaseapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdanxa-ilhA_Km_ONlZmHYujCIMP2Qezk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61532070521:android:4487b2fe5a645f927c2aa8",
+        "android_client_info": {
+          "package_name": "com.vfs.class07"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdanxa-ilhA_Km_ONlZmHYujCIMP2Qezk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61532070521:android:523a55b7c37fbbbe7c2aa8",
+        "android_client_info": {
+          "package_name": "com.vfs.pg29_julianr_taskmanagerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdanxa-ilhA_Km_ONlZmHYujCIMP2Qezk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

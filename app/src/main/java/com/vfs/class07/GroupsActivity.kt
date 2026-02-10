@@ -2,13 +2,12 @@ package com.vfs.class07
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,10 +15,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 
 class GroupsActivity : AppCompatActivity(), GroupListener
 {
     lateinit var groupsAdapter: GroupsAdapter
+
+    // Firebase
+    lateinit var statusButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -39,6 +42,21 @@ class GroupsActivity : AppCompatActivity(), GroupListener
             )
             insets
         }
+
+        // Firebase
+        statusButton = findViewById(R.id.statusButton_id)
+        statusButton.setOnClickListener {
+            if (Cloud.auth.currentUser != null)
+            {
+                showLogoutModal()
+            }
+            else
+            {
+                showLoginRegisterModal()
+            }
+        }
+        Cloud.auth = FirebaseAuth.getInstance()
+        checkOnlineStatus()
 
         // Initialize Data
         AppData.initialize()
@@ -110,6 +128,68 @@ class GroupsActivity : AppCompatActivity(), GroupListener
         dialog.show()
     }
 
+    fun checkOnlineStatus()
+    {
+        statusButton.text = "Offline"
+
+        Cloud.auth.currentUser?.let {
+            statusButton.text = "${it.displayName} is Online"
+        }
+    }
+
     // Extension function to remove leading/trailing spaces
     fun String.normalized(): String = this.trim()
+}
+
+// Function to display a login or register modal when pressed
+fun GroupsActivity.showLoginRegisterModal ()
+{
+    val builder = AlertDialog.Builder(this)
+
+    builder.setTitle("Login or Register")
+    builder.setMessage("Do you want to login or register?")
+
+    builder.setPositiveButton("Login") { _, _ ->
+        val intent = Intent (this, LoginRegisterActivity::class.java)
+        intent.putExtra("type", "login")
+
+        startActivity(intent)
+    }
+
+    builder.setNeutralButton("Register") { _, _ ->
+        val intent = Intent (this, LoginRegisterActivity::class.java)
+        intent.putExtra("type", "register")
+
+        startActivity(intent)
+    }
+
+    builder.setNegativeButton("Cancel") { _, _ ->
+    }
+
+    val dialog = builder.create()
+    dialog.show()
+
+    dialog.window?.setGravity(Gravity.BOTTOM)
+}
+
+// Function to display a login or register modal when pressed
+fun GroupsActivity.showLogoutModal ()
+{
+    val builder = AlertDialog.Builder(this)
+
+    builder.setTitle("Log Out")
+    builder.setMessage("Are you sure you want to log out?")
+
+    builder.setPositiveButton("Log Out") { _, _ ->
+        Cloud.auth.signOut()
+        checkOnlineStatus()
+    }
+
+    builder.setNegativeButton("Cancel") { _, _ ->
+    }
+
+    val dialog = builder.create()
+    dialog.show()
+
+    dialog.window?.setGravity(Gravity.BOTTOM)
 }

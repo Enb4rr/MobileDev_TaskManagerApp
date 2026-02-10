@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Class07">
         <activity
+            android:name=".LoginRegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".TasksActivity"
             android:exported="false" />
         <activity
