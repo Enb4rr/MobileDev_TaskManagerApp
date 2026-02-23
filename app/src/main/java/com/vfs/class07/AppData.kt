@@ -1,10 +1,14 @@
 package com.vfs.class07
 
-data class User(val uid: String, val username: String, val email: String)
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
-data class Task (var name: String, var completed: Boolean)
+data class User(val uid: String = "", val username: String = "", val email: String = "")
 
-data class Group (var name: String, var tasks: MutableList<Task>)
+data class Task (var name: String = "", var completed: Boolean = false)
+
+data class Group (var name: String = "", var tasks: MutableList<Task> = mutableListOf())
 
 class AppData
 {
@@ -32,6 +36,30 @@ class AppData
             val group_5 = Group("Other", mutableListOf(task_8))
 
             groups = mutableListOf(group_1, group_2, group_3, group_4, group_5)
+        }
+
+        fun loadFromFirebase(onComplete: () -> Unit)
+        {
+            val uid = Cloud.auth.currentUser?.uid ?: return
+            Cloud.db.reference.child("users").child(uid).child("groups")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val loadedGroups = mutableListOf<Group>()
+                        for (groupSnapshot in snapshot.children) {
+                            val group = groupSnapshot.getValue(Group::class.java)
+                            if (group != null) {
+                                if (group.tasks == null) group.tasks = mutableListOf()
+                                loadedGroups.add(group)
+                            }
+                        }
+                        groups = loadedGroups
+                        onComplete()
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Handle error
+                    }
+                })
         }
     }
 }

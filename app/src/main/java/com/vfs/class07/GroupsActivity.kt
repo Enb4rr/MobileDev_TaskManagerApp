@@ -2,7 +2,6 @@ package com.vfs.class07
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -56,17 +55,21 @@ class GroupsActivity : AppCompatActivity(), GroupListener
             }
         }
         Cloud.auth = FirebaseAuth.getInstance()
-        checkOnlineStatus()
-
-        // Initialize Data
-        AppData.initialize()
-
+        
         // Initialize UI
         val groupsRv = findViewById<RecyclerView>(R.id.groupsRv_id)
         groupsRv.layoutManager = LinearLayoutManager(this)
 
         groupsAdapter = GroupsAdapter(this)
         groupsRv.adapter = groupsAdapter
+
+        checkOnlineStatus()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh UI in case tasks changed in TasksActivity
+        groupsAdapter.notifyDataSetChanged()
     }
 
     // Load TaskActivity with the clicked Group Data
@@ -81,6 +84,7 @@ class GroupsActivity : AppCompatActivity(), GroupListener
     {
         AppData.groups.removeAt(index)
         groupsAdapter.notifyDataSetChanged()
+        Cloud.saveGroups()
     }
 
     // Add new group to Data and UI
@@ -118,6 +122,7 @@ class GroupsActivity : AppCompatActivity(), GroupListener
             // Add group to Data and UI
             AppData.groups.add(Group(groupName, mutableListOf()))
             groupsAdapter.notifyDataSetChanged()
+            Cloud.saveGroups()
         }
 
         // Cancel
@@ -130,10 +135,15 @@ class GroupsActivity : AppCompatActivity(), GroupListener
 
     fun checkOnlineStatus()
     {
-        statusButton.text = "Offline"
-
-        Cloud.auth.currentUser?.let {
-            statusButton.text = "${it.displayName} is Online"
+        if (Cloud.auth.currentUser != null) {
+            statusButton.text = "${Cloud.auth.currentUser?.displayName ?: "User"} is Online"
+            AppData.loadFromFirebase {
+                groupsAdapter.notifyDataSetChanged()
+            }
+        } else {
+            statusButton.text = "Offline"
+            AppData.initialize()
+            groupsAdapter.notifyDataSetChanged()
         }
     }
 
@@ -182,6 +192,7 @@ fun GroupsActivity.showLogoutModal ()
 
     builder.setPositiveButton("Log Out") { _, _ ->
         Cloud.auth.signOut()
+        AppData.groups.clear()
         checkOnlineStatus()
     }
 

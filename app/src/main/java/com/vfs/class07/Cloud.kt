@@ -10,5 +10,11 @@ class Cloud
     {
         lateinit var auth : FirebaseAuth
         val db = Firebase.database
+
+        fun saveGroups()
+        {
+            val uid = auth.currentUser?.uid ?: return
+            db.reference.child("users").child(uid).child("groups").setValue(AppData.groups)
+        }
     }
 }

@@ -64,6 +64,7 @@ class TasksActivity : AppCompatActivity(), TaskListener
     {
         thisGroup.tasks[index].completed = !thisGroup.tasks[index].completed
         taskAdapter.notifyItemChanged(index)
+        Cloud.saveGroups()
     }
 
     // Show edit/delete dialog
@@ -117,6 +118,7 @@ class TasksActivity : AppCompatActivity(), TaskListener
             // Add task to Data and UI
             thisGroup.tasks.add(Task(taskName, false))
             taskAdapter.notifyDataSetChanged()
+            Cloud.saveGroups()
         }
 
         // Cancel
@@ -132,6 +134,7 @@ class TasksActivity : AppCompatActivity(), TaskListener
     {
         thisGroup.tasks.removeAt(index)
         taskAdapter.notifyDataSetChanged()
+        Cloud.saveGroups()
     }
 
     // Edit task name
@@ -174,6 +177,7 @@ class TasksActivity : AppCompatActivity(), TaskListener
             // Update task name in Data and UI
             task.name = newName
             taskAdapter.notifyItemChanged(index)
+            Cloud.saveGroups()
         }
 
         // Cancel
