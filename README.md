@@ -1,7 +1,7 @@
 # MobileDev_TaskManagerApp
 
 **Made by PG29 Julian R**
-**Last Updated: 12/19/2025**
+**Last Updated: 3/2/2026**
 
 ## Description
 The project displays a simple Task Manager App with no persistence that holds functionality to: Add / Remove Groups, Add / Edit / Remove Tasks
