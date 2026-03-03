@@ -30,10 +30,8 @@ class LoginRegisterActivity : AppCompatActivity()
         enableEdgeToEdge()
         setContentView(R.layout.login_register_layout)
 
-        // Initialize Firebase Auth in your Cloud helper
         Cloud.auth = FirebaseAuth.getInstance()
 
-        // UI Binding
         usernameInputLayout = findViewById(R.id.usernameInputLayout)
         usernameField = findViewById(R.id.usernameEditText)
         emailField = findViewById(R.id.emailEditText)
@@ -47,23 +45,18 @@ class LoginRegisterActivity : AppCompatActivity()
             insets
         }
 
-        // Handle Segmented Control (Toggle) changes
         toggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked) {
-                when (checkedId) {
-                    R.id.loginTab -> {
-                        actionButton.text = "Login"
-                        usernameInputLayout.visibility = View.GONE
-                    }
-                    R.id.registerTab -> {
-                        actionButton.text = "Register"
-                        usernameInputLayout.visibility = View.VISIBLE
-                    }
+                if (checkedId == R.id.loginTab) {
+                    actionButton.text = "Login"
+                    usernameInputLayout.visibility = View.GONE
+                } else {
+                    actionButton.text = "Register"
+                    usernameInputLayout.visibility = View.VISIBLE
                 }
             }
         }
 
-        // Action Button Click
         actionButton.setOnClickListener {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString().trim()
@@ -106,25 +99,17 @@ class LoginRegisterActivity : AppCompatActivity()
                     val firebaseUser = Cloud.auth.currentUser
                     val uid = firebaseUser?.uid ?: ""
                     
-                    // Create User object
-                    val newUser = User(uid, username, email)
+                    val newUser = User(uid, username, email, mutableMapOf())
                     
-                    // Save to Realtime Database
                     Cloud.db.reference.child("users").child(uid).setValue(newUser)
                         .addOnCompleteListener { dbTask ->
                             if (dbTask.isSuccessful) {
-                                // Also update Firebase Auth Profile (for displayName)
                                 val profileUpdates = userProfileChangeRequest {
                                     displayName = username
                                 }
-                                
-                                firebaseUser?.updateProfile(profileUpdates)
-                                    ?.addOnCompleteListener { profileTask ->
-                                        if (profileTask.isSuccessful) {
-                                            Toast.makeText(this, "Registration Successful!", Toast.LENGTH_SHORT).show()
-                                            navigateToMain()
-                                        }
-                                    }
+                                firebaseUser?.updateProfile(profileUpdates)?.addOnCompleteListener { 
+                                    navigateToMain()
+                                }
                             } else {
                                 Toast.makeText(this, "Database Error: ${dbTask.exception?.message}", Toast.LENGTH_SHORT).show()
                             }

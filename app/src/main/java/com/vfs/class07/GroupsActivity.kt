@@ -15,48 +15,35 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 class GroupsActivity : AppCompatActivity(), GroupListener
 {
     lateinit var groupsAdapter: GroupsAdapter
-
-    // Firebase
     lateinit var statusButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
-        // Initialize Activity
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.groups_layout)
 
-        // Keep Activity in bounds
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rootLayout)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(
-                systemBars.left,
-                systemBars.top,
-                systemBars.right,
-                systemBars.bottom
-            )
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Firebase
         statusButton = findViewById(R.id.statusButton_id)
         statusButton.setOnClickListener {
-            if (Cloud.auth.currentUser != null)
-            {
-                showLogoutModal()
-            }
-            else
-            {
-                showLoginRegisterModal()
-            }
+            if (Cloud.auth.currentUser != null) showLogoutModal()
+            else showLoginRegisterModal()
         }
+        
         Cloud.auth = FirebaseAuth.getInstance()
         
-        // Initialize UI
         val groupsRv = findViewById<RecyclerView>(R.id.groupsRv_id)
         groupsRv.layoutManager = LinearLayoutManager(this)
 
@@ -64,73 +51,149 @@ class GroupsActivity : AppCompatActivity(), GroupListener
         groupsRv.adapter = groupsAdapter
 
         checkOnlineStatus()
+        listenForInvitations()
     }
 
     override fun onResume() {
         super.onResume()
-        // Refresh UI in case tasks changed in TasksActivity
-        groupsAdapter.notifyDataSetChanged()
+        checkOnlineStatus()
     }
 
-    // Load TaskActivity with the clicked Group Data
     override fun groupClicked(index: Int) {
         val intent = Intent(this, TasksActivity::class.java)
         intent.putExtra("index", index)
         startActivity(intent)
     }
 
-    // Remove Group from Data and UI
     override fun groupLongClicked(index: Int)
     {
-        AppData.groups.removeAt(index)
-        groupsAdapter.notifyDataSetChanged()
-        Cloud.saveGroups()
+        val options = arrayOf("Invite User", "Delete Group")
+        AlertDialog.Builder(this)
+            .setTitle("Group Options")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> showInviteUserDialog(index)
+                    1 -> deleteGroup(index)
+                }
+            }
+            .show()
     }
 
-    // Add new group to Data and UI
+    private fun deleteGroup(index: Int) {
+        val group = AppData.groups[index]
+        Cloud.deleteGroup(group)
+        AppData.groups.removeAt(index)
+        groupsAdapter.notifyDataSetChanged()
+    }
+
+    private fun showInviteUserDialog(index: Int) {
+        val group = AppData.groups[index]
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Invite User")
+        builder.setMessage("Enter the email of the user you want to invite to '${group.name}'")
+
+        val emailEditText = EditText(this)
+        builder.setView(emailEditText)
+
+        builder.setPositiveButton("Invite") { _, _ ->
+            val email = emailEditText.text.toString().trim()
+            if (email.isNotEmpty()) {
+                sendInvitation(email, group)
+            }
+        }
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
+    }
+
+    private fun sendInvitation(email: String, group: Group) {
+        // Find user by email
+        Cloud.db.reference.child("users").orderByChild("email").equalTo(email)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val targetUid = snapshot.children.first().key ?: ""
+                        val invitation = Invitation(
+                            fromUid = Cloud.auth.currentUser?.uid ?: "",
+                            fromEmail = Cloud.auth.currentUser?.email ?: "",
+                            groupId = group.id,
+                            groupName = group.name
+                        )
+                        Cloud.db.reference.child("invitations").child(targetUid).child(invitation.id).setValue(invitation)
+                        Toast.makeText(this@GroupsActivity, "Invitation sent!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@GroupsActivity, "User not found", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun listenForInvitations() {
+        val uid = Cloud.auth.currentUser?.uid ?: return
+        Cloud.db.reference.child("invitations").child(uid)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (invitationSnapshot in snapshot.children) {
+                        val invitation = invitationSnapshot.getValue(Invitation::class.java)
+                        if (invitation != null && invitation.status == "pending") {
+                            showInvitationDialog(invitation)
+                        }
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun showInvitationDialog(invitation: Invitation) {
+        AlertDialog.Builder(this)
+            .setTitle("New Invitation")
+            .setMessage("${invitation.fromEmail} invited you to join the group '${invitation.groupName}'")
+            .setPositiveButton("Accept") { _, _ ->
+                acceptInvitation(invitation)
+            }
+            .setNegativeButton("Reject") { _, _ ->
+                rejectInvitation(invitation)
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun acceptInvitation(invitation: Invitation) {
+        val uid = Cloud.auth.currentUser?.uid ?: return
+        Cloud.addGroupToUser(uid, invitation.groupId)
+        Cloud.db.reference.child("invitations").child(uid).child(invitation.id).child("status").setValue("accepted")
+            .addOnCompleteListener {
+                checkOnlineStatus()
+            }
+    }
+
+    private fun rejectInvitation(invitation: Invitation) {
+        val uid = Cloud.auth.currentUser?.uid ?: return
+        Cloud.db.reference.child("invitations").child(uid).child(invitation.id).child("status").setValue("rejected")
+    }
+
     fun addNewGroup(v : View)
     {
-        // Create Dialog
         val builder = AlertDialog.Builder(this)
         builder.setTitle("New Group")
-        builder.setMessage("Enter the name of the new group")
-
         val nameEditText = EditText(this)
         builder.setView(nameEditText)
 
         builder.setPositiveButton("Create") { _, _ ->
+            val groupName = nameEditText.text.toString().trim()
+            if (groupName.isEmpty()) return@setPositiveButton
 
-            // Get group name
-            val groupName = nameEditText.text.toString().normalized()
-
-            // Empty check
-            if (groupName.isEmpty()) {
-                Toast.makeText(this, "Group name cannot be empty", Toast.LENGTH_SHORT).show()
-                return@setPositiveButton
-            }
-
-            // Duplicate check
-            val exists = AppData.groups.any {
-                it.name.equals(groupName, ignoreCase = true)
-            }
-
-            if (exists) {
-                Toast.makeText(this, "Group already exists", Toast.LENGTH_SHORT).show()
-                return@setPositiveButton
-            }
-
-            // Add group to Data and UI
-            AppData.groups.add(Group(groupName, mutableListOf()))
+            val newGroup = Group(name = groupName)
+            val uid = Cloud.auth.currentUser?.uid ?: return@setPositiveButton
+            
+            Cloud.saveGroup(newGroup)
+            Cloud.addGroupToUser(uid, newGroup.id)
+            
+            AppData.groups.add(newGroup)
             groupsAdapter.notifyDataSetChanged()
-            Cloud.saveGroups()
         }
-
-        // Cancel
         builder.setNegativeButton("Cancel", null)
-
-        // Show Dialog
-        val dialog = builder.create()
-        dialog.show()
+        builder.show()
     }
 
     fun checkOnlineStatus()
@@ -142,65 +205,32 @@ class GroupsActivity : AppCompatActivity(), GroupListener
             }
         } else {
             statusButton.text = "Offline"
-            AppData.initialize()
+            AppData.groups.clear()
             groupsAdapter.notifyDataSetChanged()
         }
     }
-
-    // Extension function to remove leading/trailing spaces
-    fun String.normalized(): String = this.trim()
 }
 
-// Function to display a login or register modal when pressed
-fun GroupsActivity.showLoginRegisterModal ()
-{
+fun GroupsActivity.showLoginRegisterModal () {
     val builder = AlertDialog.Builder(this)
-
     builder.setTitle("Login or Register")
-    builder.setMessage("Do you want to login or register?")
-
     builder.setPositiveButton("Login") { _, _ ->
-        val intent = Intent (this, LoginRegisterActivity::class.java)
-        intent.putExtra("type", "login")
-
-        startActivity(intent)
+        startActivity(Intent (this, LoginRegisterActivity::class.java))
     }
-
     builder.setNeutralButton("Register") { _, _ ->
-        val intent = Intent (this, LoginRegisterActivity::class.java)
-        intent.putExtra("type", "register")
-
-        startActivity(intent)
+        startActivity(Intent (this, LoginRegisterActivity::class.java))
     }
-
-    builder.setNegativeButton("Cancel") { _, _ ->
-    }
-
-    val dialog = builder.create()
-    dialog.show()
-
-    dialog.window?.setGravity(Gravity.BOTTOM)
+    builder.setNegativeButton("Cancel", null)
+    builder.show().window?.setGravity(Gravity.BOTTOM)
 }
 
-// Function to display a login or register modal when pressed
-fun GroupsActivity.showLogoutModal ()
-{
+fun GroupsActivity.showLogoutModal () {
     val builder = AlertDialog.Builder(this)
-
     builder.setTitle("Log Out")
-    builder.setMessage("Are you sure you want to log out?")
-
     builder.setPositiveButton("Log Out") { _, _ ->
         Cloud.auth.signOut()
-        AppData.groups.clear()
         checkOnlineStatus()
     }
-
-    builder.setNegativeButton("Cancel") { _, _ ->
-    }
-
-    val dialog = builder.create()
-    dialog.show()
-
-    dialog.window?.setGravity(Gravity.BOTTOM)
+    builder.setNegativeButton("Cancel", null)
+    builder.show().window?.setGravity(Gravity.BOTTOM)
 }
